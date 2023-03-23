@@ -12,7 +12,7 @@ output:
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
-pacman::p_load(pacman, tidyverse, lattice, s20x, knitr, devtools, roxygen2, testthat)
+pacman::p_load(pacman, tidyverse, knitr, devtools)
 
 mychisim<-function(n1,sigma1,mean1,iter,ymax,x,y){    # adjust ymax to make graph fit
   y1=rnorm(n1*iter,mean=mean1,sd=sigma1)# generate iter samples of size n1
@@ -30,7 +30,7 @@ mychisim<-function(n1,sigma1,mean1,iter,ymax,x,y){    # adjust ymax to make grap
   curve(dchisq(x,n1-1),add=TRUE,col="Red",lty=2,lwd=3) # add a theoretical curve
   title=expression(chi^2==frac((n[1]-1)*s^2,sigma^2)) #mathematical annotation -see ?plotmath
   legend(x,y,c("Simulated","Theoretical"),col=c("Blue","Red"),lwd=4,lty=1:2,bty="n",title=title) # Legend #
-  return(list(w=w,summary=summary(w),sd=sd(w),fun="Chi-sq")) # some output to use if needed
+  return(invisible(list(w=w,summary=summary(w),sd=sd(w),fun="Chi-sq"))) # some output to use if needed
 }
 
 myTsim<-function(n1,sigma1,mean1,iter,ymax,x,y){    # adjust ymax to make graph fit
@@ -51,7 +51,7 @@ myTsim<-function(n1,sigma1,mean1,iter,ymax,x,y){    # adjust ymax to make graph 
   title=expression(T==frac((bar(y)-mu),s/sqrt(n1))) #mathematical annotation -see ?plotmath
   legend(x,y,c("Simulated","Theoretical"),col=c("Blue","Red"),lwd=4,lty=1:2,bty="n",title=title) # Legend #
   invisible(list(w=w,summary=summary(w),sd=sd(w),fun="T")) # some output to use if needed
- return(list(w=w,summary=summary(w),sd=sd(w),fun="T")) # some output to use if needed
+ return(invisible(list(w=w,summary=summary(w),sd=sd(w),fun="T"))) # some output to use if needed
 }
 
 mychisim2<-function(n1,n2,sigma1,sigma2,mean1,mean2,iter,ymax,x,y){    # adjust ymax to make graph fit
@@ -70,7 +70,7 @@ mychisim2<-function(n1,n2,sigma1,sigma2,mean1,mean2,iter,ymax,x,y){    # adjust 
   curve(dchisq(x,n1+n2-2),add=TRUE,col="Red",lty=2,lwd=3) # add a theoretical curve
   title=expression(chi^2==frac((n[1]+n[2]-2)*S[p]^2,sigma^2)) #mathematical annotation -see ?plotmath
   legend(x,y,c("Simulated","Theoretical"),col=c("Blue","Red"),lwd=4,lty=1:2,bty="n",title=title) # Legend #
-  return(list(w=w,summary=summary(w),sd=sd(w),fun="Chi-sq")) # some output to use if needed
+  return (invisible(list(w=w,summary=summary(w),sd=sd(w),fun="Chi-sq"))) # some output to use if needed
 }
 ```
 
@@ -87,7 +87,7 @@ getwd()
 ```{r}
 mychisim(n1 = 10, sigma1 = 4, mean1 = 10, iter = 1000, ymax = 0.12, x = 20, y = 0.08)
 
-mychisim(n1 = 20, sigma1 = 4, mean1 = 10, iter = 1000, ymax = 0.08, x = 30, y = 0.08)
+mychisim(n1 = 20, sigma1 = 4, mean1 = 10, iter = 1000, ymax = 0.08, x = 30, y = 0.06)
 
 mychisim(n1 = 100, sigma1 = 4, mean1 = 10, iter = 1000, ymax = 0.04, x = 120, y = 0.03)
 
@@ -106,9 +106,9 @@ hist(chiwval$w, col = rainbow(16), xlab = expression(paste(chi^2, "Value", sep =
 ## T Statistic
 
 ```{r}
-myTsim(n1 = 10, sigma1 = 4, mean1 = 10, iter = 1000, ymax = 0.5, x = 2, y = 0.5)
+myTsim(n1 = 10, sigma1 = 4, mean1 = 10, iter = 1000, ymax = 0.5, x = 2, y = 0.3)
 
-myTsim(n1 = 20, sigma1 = 4, mean1 = 10, iter = 1000, ymax = 0.4, x = 2, y = 0.4)
+myTsim(n1 = 20, sigma1 = 4, mean1 = 10, iter = 1000, ymax = 0.5, x = 2, y = 0.3)
 
 myTsim(n1 = 100, sigma1 = 4, mean1 = 10, iter = 1000, ymax = 0.5, x = 1.5, y = 0.4)
 
@@ -132,6 +132,20 @@ mychisim2(n1 = 50, n2 = 50, sigma1 = 4, sigma2 = 4, mean1 = 5, mean2 = 10, iter 
 
 mychisim2(n1 = 80, n2 = 50, sigma1 = 10, sigma2 = 10, mean1 = 3, mean2 = 5, iter = 10000, ymax = 0.03, x = 160, y = 0.02)
 ```
+
+```{r}
+chisim2wval <- mychisim2(n1 = 10, n2 = 14, sigma1 = 3, sigma2 = 3, mean1=  5, mean2 = 10, iter = 10000, ymax = 0.07, x = 40, y = 0.05)
+hist(chisim2wval$w, col = rainbow(16), xlab = expression(paste(T, "Value", sep = " "), las = 1))
+```
+
+## Task 5
+
+
+
+
+
+
+
 
 
 
