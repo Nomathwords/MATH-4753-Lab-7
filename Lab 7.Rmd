@@ -72,6 +72,46 @@ mychisim2<-function(n1,n2,sigma1,sigma2,mean1,mean2,iter,ymax,x,y){    # adjust 
   legend(x,y,c("Simulated","Theoretical"),col=c("Blue","Red"),lwd=4,lty=1:2,bty="n",title=title) # Legend #
   return (invisible(list(w=w,summary=summary(w),sd=sd(w),fun="Chi-sq"))) # some output to use if needed
 }
+
+myTsim2<-function(n1,n2,sigma1,sigma2,mean1,mean2,iter,ymax,x,y){
+  y1=rnorm(n1*iter,mean=mean1,sd=sigma1)# generate iter samples of size n1
+  y2=rnorm(n2*iter,mean=mean2,sd=sigma2)
+  data1.mat=matrix(y1,nrow=n1,ncol=iter,byrow=TRUE) # Each column is a sample size n1
+  data2.mat=matrix(y2,nrow=n2,ncol=iter,byrow=TRUE)
+  ssq1=apply(data1.mat,2,var) # ssq1 is s squared
+  ybar1= apply(data1.mat,2,mean)
+  ssq2=apply(data2.mat,2,var)
+  ybar2=apply(data2.mat,2,mean)
+  spsq=((n1-1)*ssq1 + (n2-1)*ssq2)/(n1+n2-2) # pooled s squared
+  w=((ybar1-ybar2)-(mean1-mean2))/sqrt(spsq*(1/n1+1/n2))#sigma1=sigma2,  Chi square stat
+  hist(w,freq=FALSE, ylim=c(0,ymax), # Histogram with annotation
+  main=substitute(paste("Sample size = ",n[1]+n[2]," = ",n1+n2," statistic = ",T)),
+  xlab=paste(" T Statistic",sep=""), las=1)
+  lines(density(w),col="Blue",lwd=3) # add a density plot
+  curve(dt(x,n1+n2-2),add=TRUE,col="Red",lty=2,lwd=3) # add a theoretical curve
+  title=expression(T==frac((bar(Y)[1]-bar(Y)[2])-(mu[1]-mu[2]),S[p]*sqrt(frac(1,n[1])+frac(1,n[2])))) #mathematical annotation -see ?plotmath
+  legend(x,y,c("Simulated","Theoretical"),col=c("Blue","Red"),lwd=4,lty=1:2,bty="n",title=title)# Legend #
+  return(invisible(list(w=w,summary=summary(w),sdw=sd(w),fun="T"))) # some output to use if needed
+}
+
+myFsim2<-function(n1,n2,sigma1,sigma2,mean1,mean2,iter,ymax,x,y){
+  y1=rnorm(n1*iter,mean=mean1,sd=sigma1)# generate iter samples of size n1
+  y2=rnorm(n2*iter,mean=mean2,sd=sigma2)
+  data1.mat=matrix(y1,nrow=n1,ncol=iter,byrow=TRUE) # Each column is a sample size n1
+  data2.mat=matrix(y2,nrow=n2,ncol=iter,byrow=TRUE)
+  ssq1=apply(data1.mat,2,var) # ssq1 is s squared
+  ssq2=apply(data2.mat,2,var)
+  #spsq=((n1-1)*ssq1 + (n2-1)*ssq2)/(n1+n2-2) # pooled s squared
+  w=ssq1*sigma2^2/(ssq2*sigma1^2) #
+  hist(w,freq=FALSE, ylim=c(0,ymax), # Histogram with annotation
+  main=substitute(paste("Sample size = ",n[1]+n[2]," = ",n1+n2," statistic = ",F)),
+  xlab=paste("F Statistic",sep=""), las=1)
+  lines(density(w),col="Blue",lwd=3) # add a density plot
+  curve(df(x,n1-1,n2-1),xlim=c(0,6),add=TRUE,col="Red",lty=2,lwd=3) # add a theoretical curve
+  title=expression(F==frac(s[1]^2,s[2]^2)*frac(sigma[2]^2,sigma[1]^2)) #mathematical annotation -see ?plotmath
+  legend(x,y,c("Simulated","Theoretical"),col=c("Blue","Red"),lwd=4,lty=1:2,bty="n",title=title)# Legend #
+  return(invisible(list(w=w,summary=summary(w),sd=sd(w),fun="F"))) # some output to use if needed
+}
 ```
 
 # Task 1
@@ -101,6 +141,7 @@ chiwval <- mychisim(n1 = 10, sigma1 = 10, mean1 = 20, iter = 1500, ymax = 0.12, 
 hist(chiwval$w, col = rainbow(16), xlab = expression(paste(chi^2, "Value", sep = " "), las = 1))
 ```
 
+
 # Task 3
 
 ## T Statistic
@@ -114,14 +155,18 @@ myTsim(n1 = 100, sigma1 = 4, mean1 = 10, iter = 1000, ymax = 0.5, x = 1.5, y = 0
 
 myTsim(n1 = 200, sigma1 = 4, mean1 = 10, iter = 1000, ymax = 0.5, x = 1.5, y = 0.4)
 ```
+
+## Make a Histogram of myTsim$w
+
 ```{r}
 twval <- myTsim(n1 = 10, sigma1 = 10, mean1 = 20, iter = 1500, ymax = 0.4, x = 20, y = 0.07)
 hist(twval$w, col = rainbow(16), xlab = expression(paste(T, "Value", sep = " "), las = 1))
 ```
 
-## Task 4
 
-### Two Sample Chi-Square Statistic
+# Task 4
+
+## Two Sample Chi-Square Statistic
 
 ```{r}
 mychisim2(n1 = 10, n2 = 10, sigma1 = 4, sigma2 = 4, mean1 = 5, mean2 = 10, iter = 1000, ymax = 0.10, x = 30, y = 0.08)
@@ -133,26 +178,81 @@ mychisim2(n1 = 50, n2 = 50, sigma1 = 4, sigma2 = 4, mean1 = 5, mean2 = 10, iter 
 mychisim2(n1 = 80, n2 = 50, sigma1 = 10, sigma2 = 10, mean1 = 3, mean2 = 5, iter = 10000, ymax = 0.03, x = 160, y = 0.02)
 ```
 
+## Make a Histogram of mychisim2$w
+
 ```{r}
 chisim2wval <- mychisim2(n1 = 10, n2 = 14, sigma1 = 3, sigma2 = 3, mean1=  5, mean2 = 10, iter = 10000, ymax = 0.07, x = 40, y = 0.05)
 hist(chisim2wval$w, col = rainbow(16), xlab = expression(paste(T, "Value", sep = " "), las = 1))
 ```
 
-## Task 5
+
+# Task 5
+
+## Two Sample T Statistic
+
+```{r}
+myTsim2(n1 = 10, n2 = 10, sigma1 = 4, sigma2 = 4, mean1 = 5, mean2 = 10, iter = 1000, ymax = 0.5, x = -4, y = 0.4)
+
+myTsim2(n1 = 20, n2 = 10, sigma1 = 10, sigma2 = 10, mean1 = 3, mean2 = 5, iter = 1000, ymax = 0.5, x = -4, y = 0.4)
+
+myTsim2(n1 = 50, n2 = 50, sigma1 = 4, sigma2 = 4, mean1 = 5, mean2 = 10, iter = 10000, ymax = 0.5, x = -4, y = 0.4)
+
+myTsim2(n1 = 80, n2 = 50, sigma1 = 10, sigma2 = 10, mean1 = 3, mean2 = 5, iter = 10000, ymax = 0.5, x = -4, y = 0.4)
+```
+
+## Make a Histogram of myTsim2$w
+
+```{r}
+myTsim2wval <- myTsim2(n1=10,n2=14,sigma1=3,sigma2=3,mean1=5,mean2=10,iter=10000,ymax=0.5,x=-5,y=0.4)
+hist(myTsim2wval$w, col = rainbow(16), xlab = expression(paste(T, "Value", sep = " "), las = 1))
+```
 
 
+# Task 6
 
+## Use the table to write down the statistic that the function will calculate  
 
+$(\frac{S^2_1}{S^2_2}) (\frac{(\sigma^2_1)}{\sigma^2_2})$  
 
+## What assumptions are made?  
 
+For the Sampling Distribution: $F$ distribution with $v_1 = (n_1 - 1)$ numerator degrees of freedom and $v_2 = (n_2 - 1)$ denominator degrees of freedom.  
 
+Additional Assumptions: None
 
+## Two Sample F Statistic
 
+```{r}
+myFsim2(n1 = 50, n2 = 50, sigma1 = 4, sigma2 = 4, mean1 = 5, mean2 = 10, iter = 1000, ymax = 1.7, x = 2, y = 1.25)
 
+myFsim2(n1 = 20, n2 = 80, sigma1 = 10, sigma2 = 10, mean1 = 3, mean2 = 5, iter = 1000, ymax = 1.7, x = 2, y = 1.25)
 
+myFsim2(n1 = 50, n2 = 50, sigma1 = 4, sigma2 = 4, mean1 = 5, mean2 = 10, iter = 10000, ymax = 1.7, x = 2, y = 1.25)
 
+myFsim2(n1 = 20, n2 = 80, sigma1 = 10, sigma2 = 10, mean1 = 3, mean2 = 5, iter = 10000, ymax = 1.7, x = 2, y = 1.25)
+```
 
+## Make a Histogram of myFsim2$w
 
+```{r}
+myFsim2wval <- myFsim2(n1=10,n2=14,sigma1=3,sigma2=2,mean1=5,mean2=10,iter=1000,ymax=0.9,x=3,y=0.6)
+hist(myFsim2wval$w, col = rainbow(16), xlab = expression(paste(T, "Value", sep = " "), las = 1))
+```
+
+# Task 7
+
+```{r}
+devtools::install_local("C:/Users/Hunter/Desktop/Math4753Spring2023.zip")
+```
+
+```{r}
+library(Math4753Spring2023)
+```
+
+```{r}
+data("fire")
+knitr::kable(head(fire))
+```
 
 
 ```{r}
