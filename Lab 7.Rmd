@@ -147,9 +147,9 @@ hist(chiwval$w, col = rainbow(16), xlab = expression(paste(chi^2, "Value", sep =
 ## T Statistic
 
 ```{r}
-myTsim(n1 = 10, sigma1 = 4, mean1 = 10, iter = 1000, ymax = 0.5, x = 2, y = 0.3)
+myTsim(n1 = 10, sigma1 = 4, mean1 = 10, iter = 1000, ymax = 0.5, x = 1.75, y = 0.3)
 
-myTsim(n1 = 20, sigma1 = 4, mean1 = 10, iter = 1000, ymax = 0.5, x = 2, y = 0.3)
+myTsim(n1 = 20, sigma1 = 4, mean1 = 10, iter = 1000, ymax = 0.5, x = 1.75, y = 0.3)
 
 myTsim(n1 = 100, sigma1 = 4, mean1 = 10, iter = 1000, ymax = 0.5, x = 1.5, y = 0.4)
 
@@ -159,7 +159,7 @@ myTsim(n1 = 200, sigma1 = 4, mean1 = 10, iter = 1000, ymax = 0.5, x = 1.5, y = 0
 ## Make a Histogram of myTsim$w
 
 ```{r}
-twval <- myTsim(n1 = 10, sigma1 = 10, mean1 = 20, iter = 1500, ymax = 0.4, x = 20, y = 0.07)
+twval <- myTsim(n1 = 10, sigma1 = 10, mean1 = 20, iter = 1500, ymax = 0.4, x = 2, y = 0.3)
 hist(twval$w, col = rainbow(16), xlab = expression(paste(T, "Value", sep = " "), las = 1))
 ```
 
